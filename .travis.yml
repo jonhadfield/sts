@@ -1,0 +1,25 @@
+language: go
+go: 1.7
+install: 
+before_deploy:
+- GOOS=linux GOARCH=amd64 go build -o sts_linux_amd64
+- GOOS=linux GOARCH=386 go build -o sts_linux_386
+- GOOS=linux GOARCH=arm go build -o sts_linux_arm
+- GOOS=darwin GOARCH=amd64 go build -o sts_darwin_amd64
+- GOOS=windows GOARCH=amd64 go build -o sts_windows_amd64.exe
+- GOOS=windows GOARCH=386 go build -o sts_windows_386.exe
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key:
+    secure: s/EWjxE0rMGtUIF3KX62I6jpFJ6bQrRo6DrWpYLYt7ooOIMzIg0arFxWNwB46DQ7JrxakxO/Z91MDjM4TDa9DrpbjqgaepEbxyJHiBCASdW8mHcQULchbQ7USarfJNnl+zEIMdCBQ0PCXTZmqLaTiNz3AGlutWBt+M+g65qioqo8inmLU0p9je6b9bMEhyE/k80qphMBVKb52XDoIGkPpZ/CVfymXV/DChAwT0x9hfSArTs/kSPbUWX8zFxNfpGuKwzEK+YoFtkqoi50dMKE/XVD7EGTvTFRuIT16foe8OD/eWgAescahb5jt+csQhTxyf3TOajhHhnfNdGz0OigoDr6khOleOajNKIwiQT+7VWu54NWr5OCIPwPEt2pw1nSM4zSoxCb2bLogv1JIDLn7dZyvWkXjZZtxXT2EWANL4y9nSSBJxKDtbUh0BDAOkcVfoqLGOPfH2tHpOCNfN2y+pKAsSTX9deORKBJUXHBuab3CxpoOBAwrM7oSnXmnEYVQMnbHUNoR6HFmJeEokI4hKY8Qc4ExhWHNCSzdHxLJA3caDVrnhVr9tGltBO3MNnVUmQHaKf8EvOJl1Q/lxF/xW7bMBVHIPImog3iOwjnLjf9cEB6izXlP7d99QNosNO7pvEwjHUZtRosCEtb8al0EvkRWmjCbIml6Q216Df82Uo=
+  file:
+  - sts_linux_amd64
+  - sts_linux_386
+  - sts_linux_arm
+  - sts_darwin_amd64
+  - sts_windows_amd64.exe
+  - sts_windows_386.exe
+  on:
+    tags: true
+    repo: jonhadfield/sts
