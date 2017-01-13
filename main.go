@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sts"
-	"github.com/aws/aws-sdk-go/aws"
-	"fmt"
 	"os"
 	"syscall"
 )
