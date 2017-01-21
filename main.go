@@ -13,10 +13,6 @@ import (
 	"time"
 )
 
-type cliArgs struct {
-	displayOnly bool
-}
-
 func getMFASerial(sess client.ConfigProvider) (serialNo string) {
 	// Try to load the MFA device serial using long term credentials
 	svc := iam.New(sess)
@@ -34,7 +30,8 @@ func getMFASerial(sess client.ConfigProvider) (serialNo string) {
 	return serialNo
 }
 
-func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string, tokenCode string, hide bool, shell bool) {
+func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string,
+	tokenCode string, hide bool, shell bool) {
 	if duration == 0 {
 		duration = 43200
 	}
@@ -71,7 +68,8 @@ func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string
 	}
 }
 
-func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName string, duration int64, serialNo string, tokenCode string, hide bool, shell bool) {
+func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName string, duration int64,
+	serialNo string, tokenCode string, hide bool, shell bool) {
 	if duration == 0 {
 		duration = 3600
 	}
@@ -166,8 +164,9 @@ func main() {
 					Usage: "arn of the role being assumed",
 				},
 				cli.IntFlag{
-					Name:  "duration-seconds",
-					Usage: "How long the temporary credentials should remain valid (Min: 900 Max: 3600 Default: 3600)",
+					Name: "duration-seconds",
+					Usage: "How long the temporary credentials should remain valid " +
+						"(Min: 900 Max: 3600 Default: 3600)",
 				},
 				cli.StringFlag{
 					Name:  "serial-number",
@@ -190,13 +189,18 @@ func main() {
 				roleArn := c.String("role-arn")
 				roleSessionName := c.String("role-session-name")
 				if roleArn == "" && roleSessionName == "" {
-					return cli.NewExitError("error: --role-arn and --role-session-name must be specified", 1)
+					return cli.NewExitError("error: "+
+						"--role-arn and --role-session-name must be specified", 1)
 				} else if roleArn == "" {
-					return cli.NewExitError("error: --role-arn must be specified", 1)
+					return cli.NewExitError("error: "+
+						"--role-arn must be specified", 1)
 				} else if roleSessionName == "" {
-					return cli.NewExitError("error: --role-session-name must be specified", 1)
+					return cli.NewExitError("error: "+
+						"--role-session-name must be specified", 1)
 				}
-				assumeRole(sess, roleArn, roleSessionName, c.Int64("duration-seconds"), c.String("serial-number"), c.String("token-code"), c.Bool("hide"), c.Bool("shell"))
+				assumeRole(sess, roleArn, roleSessionName, c.Int64("duration-seconds"),
+					c.String("serial-number"), c.String("token-code"),
+					c.Bool("hide"), c.Bool("shell"))
 				return nil
 			},
 		},
@@ -234,8 +238,9 @@ func main() {
 			Usage:   "Return temporary credentials for a user",
 			Flags: []cli.Flag{
 				cli.IntFlag{
-					Name:  "duration-seconds",
-					Usage: "How long the temporary credentials should remain valid (Min: 900 Max: 129600 Default: 43200)",
+					Name: "duration-seconds",
+					Usage: "How long the temporary credentials should remain valid " +
+						"(Min: 900 Max: 129600 Default: 43200)",
 				},
 				cli.StringFlag{
 					Name:  "serial-number",
@@ -255,7 +260,8 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				getSessionToken(sess, c.Int64("duration-seconds"), c.String("serial-number"), c.String("token-code"), c.Bool("hide"), c.Bool("shell"))
+				getSessionToken(sess, c.Int64("duration-seconds"), c.String("serial-number"),
+					c.String("token-code"), c.Bool("hide"), c.Bool("shell"))
 				return nil
 			},
 		},
