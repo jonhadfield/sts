@@ -31,9 +31,6 @@ func getMFASerial(sess client.ConfigProvider) (serialNo string) {
 	if serialNo == "" {
 		serialNo = os.Getenv("MFA_DEVICE")
 	}
-	if serialNo == "" {
-		serialNo = nil
-	}
 	return serialNo
 }
 
@@ -48,9 +45,6 @@ func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string
 	if serialNo != "" && tokenCode == "" {
 		fmt.Print("Enter token value: ")
 		fmt.Scanln(&tokenCode)
-	}
-	if tokenCode == "" {
-		tokenCode = nil
 	}
 	svc := sts.New(sess)
 	params := &sts.GetSessionTokenInput{
@@ -86,9 +80,6 @@ func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName stri
 	if serialNo != "" && tokenCode == "" {
 		fmt.Print("Enter token value: ")
 		fmt.Scanln(&tokenCode)
-	}
-	if tokenCode == "" {
-		tokenCode = nil
 	}
 	svc := sts.New(sess)
 	params := &sts.AssumeRoleInput{
