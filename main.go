@@ -27,16 +27,10 @@ func getMFASerial(sess client.ConfigProvider) (serialNo string) {
 		return *resp.MFADevices[0].SerialNumber
 
 	}
-	// Try to load the MFA device serial from environment variable
-	envMFADevice := os.Getenv("AWS_MFA_DEVICE")
-	if envMFADevice == "" {
-		os.Getenv("MFA_DEVICE")
-	}
-	if envMFADevice == "" {
-		fmt.Print("Enter serial number: ")
-		fmt.Scanln(&serialNo)
-	} else {
-		serialNo = envMFADevice
+	// Try to load the MFA device serial from environment variables
+	serialNo = os.Getenv("AWS_MFA_DEVICE")
+	if serialNo == "" {
+		serialNo = os.Getenv("MFA_DEVICE")
 	}
 	return serialNo
 }
@@ -48,7 +42,8 @@ func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string
 	if serialNo == "" {
 		serialNo = getMFASerial(sess)
 	}
-	if tokenCode == "" {
+	// Request token code if serial number is set, but token code is not
+	if serialNo != "" && tokenCode == "" {
 		fmt.Print("Enter token value: ")
 		fmt.Scanln(&tokenCode)
 	}
@@ -133,7 +128,7 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 func main() {
 	app := cli.NewApp()
 	app.Name = "sts"
-	app.Version = "0.0.4"
+	app.Version = "0.1.1"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		cli.Author{
