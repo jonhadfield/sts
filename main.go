@@ -131,7 +131,7 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 func main() {
 	app := cli.NewApp()
 	app.Name = "sts"
-	app.Version = "0.1.6"
+	app.Version = "0.1.7"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		cli.Author{
