@@ -18,8 +18,8 @@ deploy:
   - sts_linux_386
   - sts_linux_arm
   - sts_darwin_amd64
-  - sts_windows_amd64.exe
-  - sts_windows_386.exe
+#  - sts_windows_amd64.exe
+#  - sts_windows_386.exe
   on:
     tags: true
     repo: jonhadfield/sts
