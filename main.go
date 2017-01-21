@@ -154,8 +154,8 @@ func main() {
 	app.Commands = []cli.Command{
 		{
 			Name:    "assume-role",
-			Aliases: []string{"st"},
-			Usage:   "get a session token",
+			Aliases: []string{"ar"},
+			Usage:   "Return temporary credentials for an assumed role",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "role-arn",
@@ -201,9 +201,37 @@ func main() {
 			},
 		},
 		{
+			Name:    "assume-role-with-saml",
+			Aliases: []string{"arws"},
+			Usage:   "Not yet implemented",
+			Action: func(c *cli.Context) error {
+				fmt.Println("Not implemented")
+				return nil
+			},
+		},
+		{
+			Name:    "assume-role-with-web-identity",
+			Aliases: []string{"arwwi"},
+			Usage:   "Not yet implemented",
+			Action: func(c *cli.Context) error {
+				fmt.Println("Not implemented")
+				return nil
+			},
+		},
+
+		{
+			Name:    "get-federation-token",
+			Aliases: []string{"gft"},
+			Usage:   "Not yet implemented",
+			Action: func(c *cli.Context) error {
+				fmt.Println("Not implemented")
+				return nil
+			},
+		},
+		{
 			Name:    "get-session-token",
-			Aliases: []string{"st"},
-			Usage:   "get a session token",
+			Aliases: []string{"gst"},
+			Usage:   "Return temporary credentials for a user",
 			Flags: []cli.Flag{
 				cli.IntFlag{
 					Name:  "duration-seconds",
@@ -228,15 +256,6 @@ func main() {
 			},
 			Action: func(c *cli.Context) error {
 				getSessionToken(sess, c.Int64("duration-seconds"), c.String("serial-number"), c.String("token-code"), c.Bool("hide"), c.Bool("shell"))
-				return nil
-			},
-		},
-		{
-			Name:    "get-federation-token",
-			Aliases: []string{"ft"},
-			Usage:   "get a federation token",
-			Action: func(c *cli.Context) error {
-				fmt.Println("Not implemented")
 				return nil
 			},
 		},
