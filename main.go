@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/client"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
@@ -77,7 +76,8 @@ func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName stri
 	if serialNo == "" {
 		serialNo = getMFASerial(sess)
 	}
-	if tokenCode == "" {
+	// Request token code if serial number is set, but token code is not
+	if serialNo != "" && tokenCode == "" {
 		fmt.Print("Enter token value: ")
 		fmt.Scanln(&tokenCode)
 	}
@@ -128,7 +128,7 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 func main() {
 	app := cli.NewApp()
 	app.Name = "sts"
-	app.Version = "0.1.1"
+	app.Version = "0.1.2"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		cli.Author{
