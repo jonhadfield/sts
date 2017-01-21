@@ -49,8 +49,10 @@ func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string
 	svc := sts.New(sess)
 	params := &sts.GetSessionTokenInput{
 		DurationSeconds: &duration,
-		SerialNumber:    &serialNo,
-		TokenCode:       &tokenCode,
+	}
+	if tokenCode != "" && serialNo != "" {
+		params.SerialNumber = &serialNo
+		params.TokenCode = &tokenCode
 	}
 	resp, err := svc.GetSessionToken(params)
 
@@ -71,7 +73,7 @@ func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string
 
 func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName string, duration int64, serialNo string, tokenCode string, hide bool, shell bool) {
 	if duration == 0 {
-		duration = 43200
+		duration = 3600
 	}
 	if serialNo == "" {
 		serialNo = getMFASerial(sess)
@@ -86,9 +88,12 @@ func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName stri
 		RoleArn:         &roleArn,
 		RoleSessionName: &roleSessionName,
 		DurationSeconds: &duration,
-		SerialNumber:    &serialNo,
-		TokenCode:       &tokenCode,
 	}
+	if tokenCode != "" && serialNo != "" {
+		params.SerialNumber = &serialNo
+		params.TokenCode = &tokenCode
+	}
+
 	resp, err := svc.AssumeRole(params)
 
 	if err != nil {
@@ -128,7 +133,7 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 func main() {
 	app := cli.NewApp()
 	app.Name = "sts"
-	app.Version = "0.1.3"
+	app.Version = "0.1.5"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		cli.Author{
