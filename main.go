@@ -163,12 +163,12 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "role-session-name",
-					Usage: "arn of the role being assumed",
+					Usage: "Arn of the role being assumed",
 				},
-				cli.IntFlag{
-					Name: "duration-seconds",
-					Usage: "How long the temporary credentials should remain valid " +
-						"(Min: 900 Max: 3600 Default: 3600)",
+				cli.Int64Flag{
+					Name:  "duration-seconds",
+					Usage: "Time for temporary credentials to remain valid",
+					Value: 3600,
 				},
 				cli.StringFlag{
 					Name:  "serial-number",
@@ -180,7 +180,7 @@ func main() {
 				},
 				cli.BoolFlag{
 					Name:  "hide",
-					Usage: "hide credentials",
+					Usage: "Hide credentials",
 				},
 				cli.BoolFlag{
 					Name:  "shell, s",
@@ -239,10 +239,10 @@ func main() {
 			// Aliases: []string{"gst"},
 			Usage: "Return temporary credentials for a user",
 			Flags: []cli.Flag{
-				cli.IntFlag{
-					Name: "duration-seconds",
-					Usage: "How long the temporary credentials should remain valid " +
-						"(Min: 900 Max: 129600 Default: 43200)",
+				cli.Int64Flag{
+					Name:  "duration-seconds",
+					Usage: "Time for temporary credentials to remain valid",
+					Value: 43200,
 				},
 				cli.StringFlag{
 					Name:  "serial-number",
@@ -254,7 +254,7 @@ func main() {
 				},
 				cli.BoolFlag{
 					Name:  "hide",
-					Usage: "hide credentials",
+					Usage: "Hide credentials",
 				},
 				cli.BoolFlag{
 					Name:  "shell, s",
