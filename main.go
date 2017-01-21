@@ -167,7 +167,7 @@ func main() {
 				},
 				cli.IntFlag{
 					Name:  "duration-seconds",
-					Usage: "How long the temporary credentials should remain valid",
+					Usage: "How long the temporary credentials should remain valid (Min: 900 Max: 3600 Default: 3600)",
 				},
 				cli.StringFlag{
 					Name:  "serial-number",
@@ -235,7 +235,7 @@ func main() {
 			Flags: []cli.Flag{
 				cli.IntFlag{
 					Name:  "duration-seconds",
-					Usage: "How long the temporary credentials should remain valid",
+					Usage: "How long the temporary credentials should remain valid (Min: 900 Max: 129600 Default: 43200)",
 				},
 				cli.StringFlag{
 					Name:  "serial-number",
