@@ -193,9 +193,6 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				// fmt.Println(app.Flags)
-				// fmt.Println(c.Args())
-				// fmt.Println(c.Bool("display"))
 				getSessionToken(sess, c.Bool("hide"), c.Bool("shell"))
 				return nil
 			},
