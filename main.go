@@ -85,7 +85,7 @@ func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName stri
 	params := &sts.AssumeRoleInput{
 		RoleArn:         &roleArn,
 		RoleSessionName: &roleSessionName,
-		DurationSeconds: aws.Int64(3600),
+		DurationSeconds: &duration,
 		SerialNumber:    &serialNo,
 		TokenCode:       &tokenCode,
 	}
