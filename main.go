@@ -139,8 +139,8 @@ func unsetAWSEnvvars() {
 func getSession() (sess *session.Session) {
 	sess, err := session.NewSession()
 	if err != nil {
-		fmt.Println("failed to create session,", err)
-		return
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
 	}
 	return sess
 }
