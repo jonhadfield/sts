@@ -218,9 +218,7 @@ func main() {
 				if c.Bool("unset-env") {
 					unsetAWSEnvvars()
 				}
-				fmt.Println("Getting session")
 				sess := getSession()
-				fmt.Println("Finished getting session")
 
 				assumeRole(sess, roleArn, roleSessionName, c.Int64("duration-seconds"),
 					c.String("serial-number"), c.String("token-code"),
