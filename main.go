@@ -128,6 +128,12 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 	syscall.Exec(os.Getenv("SHELL"), []string{os.Getenv("SHELL")}, syscall.Environ())
 }
 
+func unsetAWSEnvvars() {
+	os.Unsetenv("AWS_ACCESS_KEY_ID")
+	os.Unsetenv("AWS_SECRET_ACCESS_KEY")
+	os.Unsetenv("AWS_SESSION_TOKEN")
+}
+
 func main() {
 	app := cli.NewApp()
 	app.EnableBashCompletion = true
@@ -186,6 +192,10 @@ func main() {
 					Name:  "shell, s",
 					Usage: "Fork to a shell with credentials set in environment",
 				},
+				cli.BoolFlag{
+					Name:  "unset-env, u",
+					Usage: "Unset AWS environment variables before acquiring credentials",
+				},
 			},
 			Action: func(c *cli.Context) error {
 				roleArn := c.String("role-arn")
@@ -200,6 +210,11 @@ func main() {
 					return cli.NewExitError("error: "+
 						"--role-session-name must be specified", 1)
 				}
+
+				if c.Bool("unset-env") {
+					unsetAWSEnvvars()
+				}
+
 				assumeRole(sess, roleArn, roleSessionName, c.Int64("duration-seconds"),
 					c.String("serial-number"), c.String("token-code"),
 					c.Bool("hide"), c.Bool("shell"))
