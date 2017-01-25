@@ -68,6 +68,33 @@ func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string
 	}
 }
 
+func getFederationToken(sess client.ConfigProvider, duration int64, name string,
+	policy string, hide bool, shell bool) {
+
+	svc := sts.New(sess)
+	params := &sts.GetFederationTokenInput{
+		DurationSeconds: &duration,
+		Name:            &name,
+		Policy:          &policy,
+	}
+
+	resp, err := svc.GetFederationToken(params)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	if hide != true {
+		showCreds(*resp.Credentials.AccessKeyId, *resp.Credentials.SecretAccessKey,
+			*resp.Credentials.SessionToken, *resp.Credentials.Expiration)
+	}
+	if shell == true {
+		forkShell(*resp.Credentials.AccessKeyId, *resp.Credentials.SecretAccessKey,
+			*resp.Credentials.SessionToken, *resp.Credentials.Expiration)
+	}
+}
+
 func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName string, duration int64,
 	serialNo string, tokenCode string, hide bool, shell bool) {
 	if duration == 0 {
@@ -248,9 +275,41 @@ func main() {
 		{
 			Name:    "get-federation-token",
 			Aliases: []string{"gft"},
-			Usage:   "Not yet implemented",
+			Usage:   "Return temporary credentials for a federated user",
+			Flags: []cli.Flag{
+				cli.Int64Flag{
+					Name:  "duration-seconds",
+					Usage: "Time for temporary credentials to remain valid",
+					Value: 43200,
+				},
+				cli.StringFlag{
+					Name:  "name",
+					Usage: "Name of the federated user",
+				},
+				cli.StringFlag{
+					Name:  "policy",
+					Usage: "IAM policy to scope down credentials",
+				},
+				cli.BoolFlag{
+					Name:  "hide",
+					Usage: "Hide credentials",
+				},
+				cli.BoolFlag{
+					Name:  "shell, s",
+					Usage: "Fork to a shell with credentials set in environment",
+				},
+				cli.BoolFlag{
+					Name:  "unset-env, u",
+					Usage: "Unset AWS environment variables before acquiring credentials",
+				},
+			},
 			Action: func(c *cli.Context) error {
-				fmt.Println("Not implemented")
+				if c.Bool("unset-env") {
+					unsetAWSEnvvars()
+				}
+				sess := getSession()
+				getFederationToken(sess, c.Int64("duration-seconds"), c.String("name"),
+					c.String("policy"), c.Bool("hide"), c.Bool("shell"))
 				return nil
 			},
 		},
