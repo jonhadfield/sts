@@ -16,22 +16,22 @@ import (
 )
 
 var (
-	debug = log.New(ioutil.Discard, "", 0)
-	info  = log.New(ioutil.Discard, "", 0)
-	warn  = log.New(ioutil.Discard, "", 0)
-	error = log.New(ioutil.Discard, "", 0)
+	_debug = log.New(ioutil.Discard, "", 0)
+	_info  = log.New(ioutil.Discard, "", 0)
+	_warn  = log.New(ioutil.Discard, "", 0)
+	_error = log.New(ioutil.Discard, "", 0)
 )
 
 func getMFASerial(sess client.ConfigProvider) (serialNo string) {
-	debug.Println("Trying to obtain serial using long term credentials")
+	_debug.Println("Trying to obtain serial using long term credentials")
 	svc := iam.New(sess)
 	params := &iam.ListMFADevicesInput{}
 	resp, err := svc.ListMFADevices(params)
 	if err == nil {
-		debug.Printf("Discovered serialNo via IAM: %s\n", *resp.MFADevices[0].SerialNumber)
+		_debug.Printf("Discovered serialNo via IAM: %s\n", *resp.MFADevices[0].SerialNumber)
 		return *resp.MFADevices[0].SerialNumber
 	}
-	debug.Println("Trying to obtain serial from environment variables")
+	_debug.Println("Trying to obtain serial from environment variables")
 	serialNo = os.Getenv("AWS_MFA_DEVICE")
 	if serialNo == "" {
 		serialNo = os.Getenv("MFA_DEVICE")
@@ -41,8 +41,8 @@ func getMFASerial(sess client.ConfigProvider) (serialNo string) {
 
 func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string,
 	tokenCode string, hide bool, shell bool) {
-	debug.Println("Trying to obtain token code")
-	debug.Printf("duration:%d serialNo:%s tokenCode:%s hide:%t shell:%t\n",
+	_debug.Println("Trying to obtain token code")
+	_debug.Printf("duration:%d serialNo:%s tokenCode:%s hide:%t shell:%t\n",
 		duration, serialNo, tokenCode, hide, shell)
 	if serialNo == "" {
 		serialNo = getMFASerial(sess)
@@ -78,8 +78,8 @@ func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string
 
 func getFederationToken(sess client.ConfigProvider, duration int64, name string,
 	policy string, hide bool, shell bool) {
-	debug.Println("Getting federation token")
-	debug.Printf("duration:%d name:%s hide:%t shell:%t\n",
+	_debug.Println("Getting federation token")
+	_debug.Printf("duration:%d name:%s hide:%t shell:%t\n",
 		duration, name, hide, shell)
 	svc := sts.New(sess)
 	params := &sts.GetFederationTokenInput{
@@ -107,11 +107,11 @@ func getFederationToken(sess client.ConfigProvider, duration int64, name string,
 
 func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName string, duration int64,
 	serialNo string, tokenCode string, hide bool, shell bool) {
-	debug.Println("Assuming role")
-	debug.Printf("roleArn:%s roleSessionName:%s duration:%d serialNo:%s tokenCode:%s hide:%t shell:%t\n",
+	_debug.Println("Assuming role")
+	_debug.Printf("roleArn:%s roleSessionName:%s duration:%d serialNo:%s tokenCode:%s hide:%t shell:%t\n",
 		roleArn, roleSessionName, duration, serialNo, tokenCode, hide, shell)
 	if serialNo == "" {
-		debug.Println("serialNo not passed")
+		_debug.Println("serialNo not passed")
 		serialNo = getMFASerial(sess)
 	}
 	// Request token code if serial number is set, but token code is not
@@ -167,7 +167,7 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 }
 
 func unsetAWSEnvvars() {
-	debug.Println("Un-setting AWS Envvars")
+	_debug.Println("Un-setting AWS Envvars")
 	os.Unsetenv("AWS_ACCESS_KEY_ID")
 	os.Unsetenv("AWS_ACCESS_KEY")
 	os.Unsetenv("AWS_SECRET_ACCESS_KEY")
@@ -176,7 +176,7 @@ func unsetAWSEnvvars() {
 }
 
 func getSession() (sess *session.Session) {
-	debug.Println("Getting session")
+	_debug.Println("Getting session")
 	sess, err := session.NewSession()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
@@ -188,19 +188,19 @@ func getSession() (sess *session.Session) {
 func initLogger(level string) {
 	switch level {
 	case "debug":
-		debug = log.New(os.Stdout, "debug: ", log.Lshortfile)
-		info = log.New(os.Stdout, "info: ", log.Lshortfile)
-		warn = log.New(os.Stdout, "warn: ", log.Lshortfile)
-		error = log.New(os.Stderr, "error: ", log.Lshortfile)
+		_debug = log.New(os.Stdout, "debug: ", log.Lshortfile)
+		_info = log.New(os.Stdout, "info: ", log.Lshortfile)
+		_warn = log.New(os.Stdout, "warn: ", log.Lshortfile)
+		_error = log.New(os.Stderr, "error: ", log.Lshortfile)
 	case "info":
-		info = log.New(os.Stdout, "info: ", log.Lshortfile)
-		warn = log.New(os.Stdout, "warn: ", log.Lshortfile)
-		error = log.New(os.Stderr, "error: ", log.Lshortfile)
+		_info = log.New(os.Stdout, "info: ", log.Lshortfile)
+		_warn = log.New(os.Stdout, "warn: ", log.Lshortfile)
+		_error = log.New(os.Stderr, "error: ", log.Lshortfile)
 	case "warn":
-		warn = log.New(os.Stdout, "warn: ", log.Lshortfile)
-		error = log.New(os.Stderr, "error: ", log.Lshortfile)
+		_warn = log.New(os.Stdout, "warn: ", log.Lshortfile)
+		_error = log.New(os.Stderr, "error: ", log.Lshortfile)
 	case "error":
-		error = log.New(os.Stderr, "error: ", log.Lshortfile)
+		_error = log.New(os.Stderr, "error: ", log.Lshortfile)
 	}
 
 }
@@ -267,7 +267,7 @@ func main() {
 					Value: "warn",
 				},
 			},
-			Action: func(c *cli.Context) (err error) {
+			Action: func(c *cli.Context) error {
 				initLogger(c.String("log-level"))
 				roleArn := c.String("role-arn")
 				roleSessionName := c.String("role-session-name")
@@ -288,28 +288,25 @@ func main() {
 				assumeRole(sess, roleArn, roleSessionName, c.Int64("duration-seconds"),
 					c.String("serial-number"), c.String("token-code"),
 					c.Bool("hide"), c.Bool("shell"))
-				return err
+				return nil
 			},
 		},
 		{
 			Name:    "assume-role-with-saml",
 			Aliases: []string{"arws"},
 			Usage:   "Not yet implemented",
-			Action: func(c *cli.Context) error {
+			Action: func(c *cli.Context) {
 				fmt.Println("Not implemented")
-				return nil
 			},
 		},
 		{
 			Name:    "assume-role-with-web-identity",
 			Aliases: []string{"arwwi"},
 			Usage:   "Not yet implemented",
-			Action: func(c *cli.Context) error {
+			Action: func(c *cli.Context) {
 				fmt.Println("Not implemented")
-				return nil
 			},
 		},
-
 		{
 			Name:    "get-federation-token",
 			Aliases: []string{"gft"},
@@ -346,7 +343,7 @@ func main() {
 					Value: "warn",
 				},
 			},
-			Action: func(c *cli.Context) error {
+			Action: func(c *cli.Context) {
 				initLogger(c.String("log-level"))
 				if c.Bool("unset-env") {
 					unsetAWSEnvvars()
@@ -354,7 +351,6 @@ func main() {
 				sess := getSession()
 				getFederationToken(sess, c.Int64("duration-seconds"), c.String("name"),
 					c.String("policy"), c.Bool("hide"), c.Bool("shell"))
-				return nil
 			},
 		},
 		{
@@ -393,7 +389,7 @@ func main() {
 					Value: "warn",
 				},
 			},
-			Action: func(c *cli.Context) error {
+			Action: func(c *cli.Context) {
 				initLogger(c.String("log-level"))
 				if c.Bool("unset-env") {
 					unsetAWSEnvvars()
@@ -401,7 +397,6 @@ func main() {
 				sess := getSession()
 				getSessionToken(sess, c.Int64("duration-seconds"), c.String("serial-number"),
 					c.String("token-code"), c.Bool("hide"), c.Bool("shell"))
-				return nil
 			},
 		},
 	}
