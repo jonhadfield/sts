@@ -27,7 +27,7 @@ func getMFASerial(sess client.ConfigProvider) (serialNo string) {
 	svc := iam.New(sess)
 	params := &iam.ListMFADevicesInput{}
 	resp, err := svc.ListMFADevices(params)
-	if err == nil {
+	if err == nil && len(resp.MFADevices) > 0 {
 		_debug.Printf("Discovered serialNo via IAM: %s\n", *resp.MFADevices[0].SerialNumber)
 		return *resp.MFADevices[0].SerialNumber
 	}
