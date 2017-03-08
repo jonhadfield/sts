@@ -16,6 +16,7 @@ Benefits
 
 Known issues
 ------------
+- STS currently assumes you are using an MFA device, so always requests a token code. If MFA isn't activated, then hit <enter> to bypass 'Enter token value:' prompt.
 - assume-role-with-saml not yet implemented
 - assume-role-with-web-identity not yet implement
 - minimal testing on Windows
