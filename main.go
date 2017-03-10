@@ -36,6 +36,11 @@ func getMFASerial(sess client.ConfigProvider) (serialNo string) {
 	if serialNo == "" {
 		serialNo = os.Getenv("MFA_DEVICE")
 	}
+	if serialNo == "" {
+		_debug.Println("Could not obtain serial so request from user")
+		fmt.Print("Enter MFA serial [None]: ")
+		fmt.Scanln(&serialNo)
+	}
 	return serialNo
 }
 
