@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/client"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
@@ -31,13 +32,20 @@ func getMFASerial(sess client.ConfigProvider) (serialNo string) {
 		_debug.Printf("Discovered serialNo via IAM: %s\n", *resp.MFADevices[0].SerialNumber)
 		return *resp.MFADevices[0].SerialNumber
 	}
+	if awsErr, ok := err.(awserr.Error); ok {
+		if awsErr.Code() == "AccessDenied" {
+			_debug.Println("Access denied when listing MFA devices")
+		} else {
+			_debug.Println("Error:", awsErr.Code(), awsErr.Message())
+		}
+	}
 	_debug.Println("Trying to obtain serial from environment variables")
 	serialNo = os.Getenv("AWS_MFA_DEVICE")
 	if serialNo == "" {
 		serialNo = os.Getenv("MFA_DEVICE")
 	}
 	if serialNo == "" {
-		_debug.Println("Could not obtain serial so request from user")
+		_debug.Println("Could not obtain serial, so requesting from user")
 		fmt.Print("Enter MFA serial [None]: ")
 		fmt.Scanln(&serialNo)
 	}
