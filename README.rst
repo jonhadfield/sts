@@ -1,6 +1,3 @@
-.. image:: https://img.shields.io/badge/status-alpha-orange.svg
-    :target: https://github.com/jonhadfield/sts
-
 STS
 ===
 
