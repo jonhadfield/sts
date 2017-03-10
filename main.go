@@ -223,7 +223,7 @@ func main() {
 	app.EnableBashCompletion = true
 
 	app.Name = "sts"
-	app.Version = "0.1.14"
+	app.Version = "1.0.0"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		cli.Author{
