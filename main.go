@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/client"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/sts"
@@ -12,6 +13,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -161,13 +163,21 @@ func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName stri
 }
 
 func showCreds(keyId string, secret string, sessionToken string, expiration time.Time) {
-	fmt.Println("\n===========")
+	fmt.Println("===========")
 	fmt.Println("CREDENTIALS")
 	fmt.Println("===========")
+	if strings.HasPrefix(keyId, "AKIA") {
+		fmt.Println("*long-term credentials*")
+	}
 	fmt.Printf("AccessKeyId: %s\n", keyId)
 	fmt.Printf("SecretAccessKey: %s\n", secret)
-	fmt.Printf("SessionToken: %s\n", sessionToken)
-	fmt.Printf("Expiration: %s\n", expiration)
+	if strings.HasPrefix(keyId, "ASIA") && sessionToken != "" {
+		fmt.Printf("SessionToken: %s\n", sessionToken)
+	}
+	if !expiration.IsZero() {
+		fmt.Printf("Expiration: %s\n", expiration)
+	}
+
 }
 
 func forkShell(keyId string, secret string, sessionToken string, expiration time.Time) {
@@ -175,7 +185,7 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 	fmt.Println("\nLaunching new shell with temporary credentials...")
 	os.Setenv("AWS_ACCESS_KEY_ID", keyId)
 	os.Setenv("AWS_SECRET_ACCESS_KEY", secret)
-	os.Setenv("AWS_SECURITY_TOKEN", sessionToken)
+	os.Setenv("AWS_SESSION_TOKEN", sessionToken)
 	syscall.Exec(os.Getenv("SHELL"), []string{os.Getenv("SHELL")}, syscall.Environ())
 }
 
@@ -410,6 +420,30 @@ func main() {
 				sess := getSession()
 				getSessionToken(sess, c.Int64("duration-seconds"), c.String("serial-number"),
 					c.String("token-code"), c.Bool("hide"), c.Bool("shell"))
+			},
+		},
+		{
+			Name:  "show",
+			Usage: "Show existing credentials",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "log-level",
+					Usage: "Set log level (debug, info, warn, error)",
+					Value: "warn",
+				},
+			},
+			Action: func(c *cli.Context) {
+				initLogger(c.String("log-level"))
+				creds := credentials.NewEnvCredentials()
+				credValue, err := creds.Get()
+				if err != nil {
+					_debug.Println(err)
+					fmt.Println("No credentials found")
+					return
+				}
+				_debug.Printf("%+v\n", credValue)
+				showCreds(credValue.AccessKeyID, credValue.SecretAccessKey, credValue.SessionToken, time.Time{})
+				return
 			},
 		},
 	}
