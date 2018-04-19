@@ -184,7 +184,9 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 	// Set environment variables and fork
 	fmt.Println("\nLaunching new shell with temporary credentials...")
 	os.Setenv("AWS_ACCESS_KEY_ID", keyId)
+	os.Setenv("AWS_ACCESS_KEY", keyId)
 	os.Setenv("AWS_SECRET_ACCESS_KEY", secret)
+	os.Setenv("AWS_SECRET_KEY", secret)
 	os.Setenv("AWS_SESSION_TOKEN", sessionToken)
 	syscall.Exec(os.Getenv("SHELL"), []string{os.Getenv("SHELL")}, syscall.Environ())
 }
