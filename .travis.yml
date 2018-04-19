@@ -1,9 +1,9 @@
 language: go
 go:
-  - "1.8.x"
-  - "1.9.x"
-  - "1.10.x"
-  - tip
+- "1.8.x"
+- "1.9.x"
+- "1.10.x"
+- tip
 install: 
 before_deploy:
 - GOOS=linux GOARCH=amd64 go build -o sts_linux_amd64
@@ -19,7 +19,7 @@ deploy:
   skip_cleanup: true
   provider: releases
   api_key:
-    secure: s/EWjxE0rMGtUIF3KX62I6jpFJ6bQrRo6DrWpYLYt7ooOIMzIg0arFxWNwB46DQ7JrxakxO/Z91MDjM4TDa9DrpbjqgaepEbxyJHiBCASdW8mHcQULchbQ7USarfJNnl+zEIMdCBQ0PCXTZmqLaTiNz3AGlutWBt+M+g65qioqo8inmLU0p9je6b9bMEhyE/k80qphMBVKb52XDoIGkPpZ/CVfymXV/DChAwT0x9hfSArTs/kSPbUWX8zFxNfpGuKwzEK+YoFtkqoi50dMKE/XVD7EGTvTFRuIT16foe8OD/eWgAescahb5jt+csQhTxyf3TOajhHhnfNdGz0OigoDr6khOleOajNKIwiQT+7VWu54NWr5OCIPwPEt2pw1nSM4zSoxCb2bLogv1JIDLn7dZyvWkXjZZtxXT2EWANL4y9nSSBJxKDtbUh0BDAOkcVfoqLGOPfH2tHpOCNfN2y+pKAsSTX9deORKBJUXHBuab3CxpoOBAwrM7oSnXmnEYVQMnbHUNoR6HFmJeEokI4hKY8Qc4ExhWHNCSzdHxLJA3caDVrnhVr9tGltBO3MNnVUmQHaKf8EvOJl1Q/lxF/xW7bMBVHIPImog3iOwjnLjf9cEB6izXlP7d99QNosNO7pvEwjHUZtRosCEtb8al0EvkRWmjCbIml6Q216Df82Uo=
+    secure: mO+iAaB+1r1jKvZJ0MyXX7ZjWp7cYX50TgCgO4JB9fdOofuBaxO3EAyqNCLb8Aip5pXwVI/is75ZMWyw+I81rP+cuovcwPmxr10S7LgiDoy0STC75ONn1YSOgyC3T16TO+OeNSnkrbnWDgIyExzdo5zWmN7kzFp+0rzrb0XQEamj7de7+apyuBWquNh9RhJFUgIKP9HsqpzmXQLOaetTaYQOy/hWk/v0nr1BXdpnL9iXfO8Wj4xY9wbAZm1idcqoHKj8JGgICo2O8DSb3lvbE9KTQoo25D1kfC0ndy/jdjkaqkctu8HTYpP0pMyk97qI5hlrxgC+Wg3RCCE5dcTtThvOwJPRAgvbGKQrIOKJBmTOW3NtEzGGP5m6SveLrdHxcq73NKuyGv00ZL6Wa+vbfDI5UhaUcMCVv1L7HcLTFn2Gw0BTixxKhVXuSI/+16+V2sB7k+xKrVZuxnFEFLdnL16G41VRJjKO3pJRhJZO4QDWwwRIVeBUmoi68hn6KoCIIGmuxRWp/QtXYefX1d1MwixKROnCh+rnhuGGRdZTenE5oZPvMLdNido70qevCYXDyOgmU0MkjMKDyZyX31i+WcO6s7LbaibspDDj9SAsATuIKF75R/+RjkrwmwjTodmu5TmFZUbAop1lHN49eQlLNCXa2rNcG2+vOT7tVfOVqKM=
   file:
   - sts_linux_amd64
   - sts_linux_386
