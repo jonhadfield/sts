@@ -16,7 +16,7 @@ Known issues
 - STS currently assumes you are using an MFA device, so always requests a token code. If MFA isn't activated, then hit <enter> to bypass 'Enter token value:' prompt.
 - assume-role-with-saml not yet implemented
 - assume-role-with-web-identity not yet implement
-- minimal testing on Windows
+- minimal testing on Windows (support for auto-setting environment variables in Windows 10 introduced in 1.1.2)
 
 Roadmap
 -------
@@ -31,11 +31,11 @@ Download the latest release for your OS and architecture from: https://github.co
 For example, on 64-bit Linux:
 ::
 
-    curl -L "https://github.com/jonhadfield/sts/releases/download/1.1.0/sts_linux_amd64" -o /usr/local/bin/sts ; chmod +x /usr/local/bin/sts
+    curl -L "https://github.com/jonhadfield/sts/releases/download/1.1.2/sts_linux_amd64" -o /usr/local/bin/sts ; chmod +x /usr/local/bin/sts
 
 on MacOS:
 ::
-    curl -L "https://github.com/jonhadfield/sts/releases/download/1.1.0/sts_darwin_amd64" -o /usr/local/bin/sts ; chmod +x /usr/local/bin/sts
+    curl -L "https://github.com/jonhadfield/sts/releases/download/1.1.2/sts_darwin_amd64" -o /usr/local/bin/sts ; chmod +x /usr/local/bin/sts
 
 
 Example Usage
