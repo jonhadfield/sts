@@ -8,10 +8,13 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/jonhadfield/subtocheck"
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
+	"runtime"
 	"sort"
 	"strings"
 	"syscall"
@@ -182,13 +185,41 @@ func showCreds(keyId string, secret string, sessionToken string, expiration time
 
 func forkShell(keyId string, secret string, sessionToken string, expiration time.Time) {
 	// Set environment variables and fork
-	fmt.Println("\nLaunching new shell with temporary credentials...")
-	os.Setenv("AWS_ACCESS_KEY_ID", keyId)
-	os.Setenv("AWS_ACCESS_KEY", keyId)
-	os.Setenv("AWS_SECRET_ACCESS_KEY", secret)
-	os.Setenv("AWS_SECRET_KEY", secret)
-	os.Setenv("AWS_SESSION_TOKEN", sessionToken)
-	syscall.Exec(os.Getenv("SHELL"), []string{os.Getenv("SHELL")}, syscall.Environ())
+	supportedOSes := []string{"darwin", "freebsd", "linux", "netbsd", "openbsd", "windows"}
+	unixLikeOSes := []string{"darwin", "freebsd", "linux", "netbsd", "openbsd"}
+	thisOS := runtime.GOOS
+
+	if !subtocheck.StringInSlice(thisOS, supportedOSes) {
+		fmt.Println("\nWarning: unable to fork shell as OS is not supported")
+	} else {
+		fmt.Println("\nLaunching new shell with temporary credentials...")
+	}
+
+	envvars := map[string]string{
+		"AWS_ACCESS_KEY_ID":     keyId,
+		"AWS_ACCESS_KEY":        keyId,
+		"AWS_SECRET_ACCESS_KEY": secret,
+		"AWS_SECRET_KEY":        secret,
+		"AWS_SESSION_TOKEN":     sessionToken}
+
+	if subtocheck.StringInSlice(thisOS, unixLikeOSes) {
+		for k, v := range envvars {
+			os.Setenv(k, v)
+		}
+		syscall.Exec(os.Getenv("SHELL"), []string{os.Getenv("SHELL")}, syscall.Environ())
+	} else if thisOS == "windows" {
+		cmd := exec.Command("PowerShell")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Stdin = os.Stdin
+		newEnv := os.Environ()
+		for k, v := range envvars {
+			newEnv = append(newEnv, fmt.Sprintf("%s=%s", k, v))
+		}
+		cmd.Env = newEnv
+		cmd.Run()
+	}
+
 }
 
 func unsetAWSEnvvars() {

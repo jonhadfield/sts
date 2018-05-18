@@ -29,6 +29,7 @@
     "private/protocol/rest",
     "private/protocol/xml/xmlutil",
     "service/iam",
+    "service/ses",
     "service/sts"
   ]
   revision = "9b0098a71f6d4d473a26ec8ad3c2feaac6eb1da6"
@@ -46,14 +47,81 @@
   revision = "0b12d6b5"
 
 [[projects]]
+  name = "github.com/jonhadfield/subtocheck"
+  packages = ["."]
+  revision = "48870d22291966543a0123559b8d69b949cb9748"
+  version = "0.0.2"
+
+[[projects]]
+  name = "github.com/miekg/dns"
+  packages = ["."]
+  revision = "e57bf427e68187a27e22adceac868350d7a7079b"
+  version = "v1.0.7"
+
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
   name = "github.com/urfave/cli"
   packages = ["."]
   revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
   version = "v1.20.0"
 
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/crypto"
+  packages = [
+    "ed25519",
+    "ed25519/internal/edwards25519",
+    "ssh/terminal"
+  ]
+  revision = "1a580b3eff7814fc9b40602fd35256c63b50f491"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = [
+    "bpf",
+    "internal/iana",
+    "internal/socket",
+    "ipv4",
+    "ipv6"
+  ]
+  revision = "2491c5de3490fced2f6cff376127c667efeed857"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = [
+    "unix",
+    "windows"
+  ]
+  revision = "7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
+
+[[projects]]
+  branch = "v3"
+  name = "gopkg.in/alexcesaro/quotedprintable.v3"
+  packages = ["."]
+  revision = "2caba252f4dc53eaf6b553000885530023f54623"
+
+[[projects]]
+  name = "gopkg.in/gomail.v2"
+  packages = ["."]
+  revision = "41f3572897373c5538c50a2402db15db079fa4fd"
+  version = "2.0.0"
+
+[[projects]]
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
+  version = "v2.2.1"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "65fc772da6018c0c2a79d5a323e6f4456c1edac41533782c13323751c2f223c9"
+  inputs-digest = "37ab8974d4fb5f42bfcd5560e3ab93d12d2bc6f694d65baabbdd635935de0c4c"
   solver-name = "gps-cdcl"
   solver-version = 1
