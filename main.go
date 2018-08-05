@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/client"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -57,18 +58,8 @@ func getMFASerial(sess client.ConfigProvider) (serialNo string) {
 	return serialNo
 }
 
-func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string,
-	tokenCode string, hide bool, shell bool) {
-	_debug.Println("Trying to obtain token code")
-	_debug.Printf("duration:%d serialNo:%s tokenCode:%s hide:%t shell:%t\n",
-		duration, serialNo, tokenCode, hide, shell)
-	if serialNo == "" {
-		serialNo = getMFASerial(sess)
-	}
-	if serialNo != "" && tokenCode == "" {
-		fmt.Print("Enter token value: ")
-		fmt.Scanln(&tokenCode)
-	}
+func sessionToken(sess client.ConfigProvider, duration int64, serialNo string,
+	tokenCode string) (*sts.Credentials, error) {
 	svc := sts.New(sess)
 	params := &sts.GetSessionTokenInput{
 		DurationSeconds: &duration,
@@ -81,16 +72,38 @@ func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string
 
 	if err != nil {
 		fmt.Println(err.Error())
+		return nil, err
+	}
+
+	return resp.Credentials, nil
+}
+
+func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string,
+	tokenCode string, hide bool, shell bool) {
+	_debug.Println("Trying to obtain token code")
+	_debug.Printf("duration:%d serialNo:%s tokenCode:%s hide:%t shell:%t\n",
+		duration, serialNo, tokenCode, hide, shell)
+	if serialNo == "" {
+		serialNo = getMFASerial(sess)
+	}
+	if serialNo != "" && tokenCode == "" {
+		fmt.Print("Enter token value: ")
+		fmt.Scanln(&tokenCode)
+	}
+	sessionTokenCreds, err := sessionToken(sess, duration, serialNo, tokenCode)
+
+	if err != nil {
+		fmt.Println(err.Error())
 		return
 	}
 
 	if hide != true {
-		showCreds(*resp.Credentials.AccessKeyId, *resp.Credentials.SecretAccessKey,
-			*resp.Credentials.SessionToken, *resp.Credentials.Expiration)
+		showCreds(*sessionTokenCreds.AccessKeyId, *sessionTokenCreds.SecretAccessKey,
+			*sessionTokenCreds.SessionToken, *sessionTokenCreds.Expiration)
 	}
 	if shell == true {
-		forkShell(*resp.Credentials.AccessKeyId, *resp.Credentials.SecretAccessKey,
-			*resp.Credentials.SessionToken, *resp.Credentials.Expiration)
+		forkShell(*sessionTokenCreds.AccessKeyId, *sessionTokenCreds.SecretAccessKey,
+			*sessionTokenCreds.SessionToken, *sessionTokenCreds.Expiration)
 	}
 }
 
@@ -137,15 +150,16 @@ func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName stri
 		fmt.Print("Enter token value: ")
 		fmt.Scanln(&tokenCode)
 	}
-	svc := sts.New(sess)
+
+	sessionTokenCreds, err := sessionToken(sess, duration, serialNo, tokenCode)
+
+	svc := sts.New(sess, &aws.Config{
+		Credentials: credentials.NewStaticCredentials(*sessionTokenCreds.AccessKeyId, *sessionTokenCreds.SecretAccessKey, *sessionTokenCreds.SessionToken)})
+
 	params := &sts.AssumeRoleInput{
 		RoleArn:         &roleArn,
 		RoleSessionName: &roleSessionName,
 		DurationSeconds: &duration,
-	}
-	if tokenCode != "" && serialNo != "" {
-		params.SerialNumber = &serialNo
-		params.TokenCode = &tokenCode
 	}
 
 	resp, err := svc.AssumeRole(params)
