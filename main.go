@@ -220,7 +220,10 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 		for k, v := range envvars {
 			os.Setenv(k, v)
 		}
-		syscall.Exec(os.Getenv("SHELL"), []string{os.Getenv("SHELL")}, syscall.Environ())
+		err := syscall.Exec(os.Getenv("SHELL"), []string{os.Getenv("SHELL")}, syscall.Environ())
+		if err != nil {
+			_error.Println(err.Error())
+		}
 	} else if thisOS == "windows" {
 		cmd := exec.Command("PowerShell")
 		cmd.Stdout = os.Stdout
