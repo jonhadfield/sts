@@ -124,11 +124,11 @@ func getFederationToken(sess client.ConfigProvider, duration int64, name string,
 }
 
 func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName string, duration int64,
-	serialNo string, tokenCode string, hide bool, shell bool) {
+	serialNo string, tokenCode string, hide bool, shell bool, noMFA bool) {
 	_debug.Println("Assuming role")
 	_debug.Printf("roleArn:%s roleSessionName:%s duration:%d serialNo:%s tokenCode:%s hide:%t shell:%t\n",
 		roleArn, roleSessionName, duration, serialNo, tokenCode, hide, shell)
-	if serialNo == "" {
+	if serialNo == "" && !noMFA {
 		_debug.Println("serialNo not passed")
 		serialNo = getMFASerial(sess)
 	}
@@ -317,6 +317,10 @@ func main() {
 					Usage: "Fork to a shell with credentials set in environment",
 				},
 				cli.BoolFlag{
+					Name:  "no-mfa",
+					Usage: "Assume role without MFA",
+				},
+				cli.BoolFlag{
 					Name:  "unset-env, u",
 					Usage: "Unset AWS environment variables before acquiring credentials",
 				},
@@ -346,7 +350,7 @@ func main() {
 				sess := getSession()
 				assumeRole(sess, roleArn, roleSessionName, c.Int64("duration-seconds"),
 					c.String("serial-number"), c.String("token-code"),
-					c.Bool("hide"), c.Bool("shell"))
+					c.Bool("hide"), c.Bool("shell"), c.Bool("no-mfa"))
 				return nil
 			},
 		},
