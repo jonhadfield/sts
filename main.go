@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/sts"
-	"github.com/jonhadfield/subtocheck"
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"log"
@@ -189,7 +188,7 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 	unixLikeOSes := []string{"darwin", "freebsd", "linux", "netbsd", "openbsd"}
 	thisOS := runtime.GOOS
 
-	if !subtocheck.StringInSlice(thisOS, supportedOSes) {
+	if !StringInSlice(thisOS, supportedOSes) {
 		fmt.Println("\nWarning: unable to fork shell as OS is not supported")
 	} else {
 		fmt.Println("\nLaunching new shell with temporary credentials...")
@@ -202,7 +201,7 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 		"AWS_SECRET_KEY":        secret,
 		"AWS_SESSION_TOKEN":     sessionToken}
 
-	if subtocheck.StringInSlice(thisOS, unixLikeOSes) {
+	if StringInSlice(thisOS, unixLikeOSes) {
 		for k, v := range envvars {
 			os.Setenv(k, v)
 		}
@@ -269,7 +268,7 @@ func main() {
 	app.EnableBashCompletion = true
 
 	app.Name = "sts"
-	app.Version = "1.1.0"
+	app.Version = "1.1.3"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		cli.Author{
@@ -491,4 +490,13 @@ func main() {
 	sort.Sort(cli.FlagsByName(app.Flags))
 	app.Run(os.Args)
 
+}
+
+func StringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }
