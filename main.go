@@ -2,13 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/client"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/iam"
-	"github.com/aws/aws-sdk-go/service/sts"
-	"github.com/urfave/cli"
 	"io/ioutil"
 	"log"
 	"os"
@@ -18,6 +11,14 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/client"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/urfave/cli"
 )
 
 var (
@@ -77,7 +78,6 @@ func getSessionToken(sess client.ConfigProvider, duration int64, serialNo string
 		params.TokenCode = &tokenCode
 	}
 	resp, err := svc.GetSessionToken(params)
-
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -106,7 +106,6 @@ func getFederationToken(sess client.ConfigProvider, duration int64, name string,
 	}
 
 	resp, err := svc.GetFederationToken(params)
-
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -148,7 +147,6 @@ func assumeRole(sess client.ConfigProvider, roleArn string, roleSessionName stri
 	}
 
 	resp, err := svc.AssumeRole(params)
-
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -179,7 +177,6 @@ func showCreds(keyId string, secret string, sessionToken string, expiration time
 	if !expiration.IsZero() {
 		fmt.Printf("Expiration: %s\n", expiration)
 	}
-
 }
 
 func forkShell(keyId string, secret string, sessionToken string, expiration time.Time) {
@@ -199,7 +196,8 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 		"AWS_ACCESS_KEY":        keyId,
 		"AWS_SECRET_ACCESS_KEY": secret,
 		"AWS_SECRET_KEY":        secret,
-		"AWS_SESSION_TOKEN":     sessionToken}
+		"AWS_SESSION_TOKEN":     sessionToken,
+	}
 
 	if StringInSlice(thisOS, unixLikeOSes) {
 		for k, v := range envvars {
@@ -221,7 +219,6 @@ func forkShell(keyId string, secret string, sessionToken string, expiration time
 		cmd.Env = newEnv
 		cmd.Run()
 	}
-
 }
 
 func unsetAWSEnvvars() {
@@ -260,7 +257,6 @@ func initLogger(level string) {
 	case "error":
 		_error = log.New(os.Stderr, "error: ", log.Lshortfile)
 	}
-
 }
 
 func main() {
@@ -271,7 +267,7 @@ func main() {
 	app.Version = "1.1.6"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
-		cli.Author{
+		{
 			Name:  "Jon Hadfield",
 			Email: "jon@lessknown.co.uk",
 		},
@@ -489,7 +485,6 @@ func main() {
 
 	sort.Sort(cli.FlagsByName(app.Flags))
 	app.Run(os.Args)
-
 }
 
 func StringInSlice(a string, list []string) bool {
