@@ -1,8 +1,8 @@
 language: go
 go:
-- "1.15.x"
+- 1.15.x
 - tip
-install: 
+install:
 before_deploy:
 - GOOS=linux GOARCH=amd64 go build -o sts_linux_amd64
 - GOOS=linux GOARCH=386 go build -o sts_linux_386
@@ -31,3 +31,5 @@ deploy:
   on:
     tags: true
     repo: jonhadfield/sts
+  api-key:
+    secure: RrmKHduTZ/WIwDPB83Wcq9tQu4SNtsbO/wH3BYn1uUWz8uprvFui0OxCFuwvN2l+s0UjteLPqWaiE81CN7dOMLBv95dL0bq1NzmsLAjvRTk9DtoMYM9mGo8cKYjgjQjd60YP8mEvWPKnsQFNSBnNxxSXHwrDnQaW4I6Zhd3bVG/GR+BxqxRMx6WlLSLQYSZb+8BTvx5FDuZf5jPsO0b1FGnTpA+21SqptbszpwT/lPXwjqJz0RJbjCJp6GSwYFrd5q+SjrLkv/i6406lx6mFDPy3h4ftWGqd17AFwZfSVJePra6IgHsbylFRj+HAsvkf3wRNqnVDhUVe4FWjt3cziwIvXtQDzfofBjiGceCIh8zhN6bLvQoOC+dIbftUDMJGQK8eNSqEZJkIIDcJCVnuYA+uvwQV8u328gqMfgBsq9TWZ69I4d2VAFOWaMhYJQliBpuYhjbTyCdfe3UWSxl15U4gRwTdVos9adu5NrbX2feGUiHXPHCJ5yN9CxnOQy463Jev1qKB0S4xwafjOdW11feRX5n3d/67u7F+B6CYAABtI2XvzHoT1bkUplL1RhuI1mZMNlTpyna5tseZg6qHzo6RlnQktfrWf5/nvC02hX8CcKr0SL4EVI77EyTmB46+Q8YkUdrCgtBzNREUf3GTDsQ+p9aeXRs0EQGSVWDuOn4=
